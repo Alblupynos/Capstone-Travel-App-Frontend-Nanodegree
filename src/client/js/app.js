@@ -2,7 +2,6 @@
 const baseURL = 'https://api.openweathermap.org/data/2.5/weather'
 const apiKey = 'b965444885756d1809d1b81b733240de&units=imperial'
 
-const generate = document.getElementById("generate");
 const zip = document.getElementById("zip");
 const feelings = document.getElementById("feelings");
 const temp = document.getElementById("temp");
@@ -23,18 +22,6 @@ const fetchWeather = async (baseURL, zipCode, apiKey) => {
         console.log('Error:', error);
     }
 }
-
-// Event listener
-generate.addEventListener('click', () => {
-    fetchWeather(baseURL, zip.value, apiKey)
-        .then(function (data) {
-            console.log(data);
-            return postData('/data', {date: newDate, temp: data.main.temp, content: feelings.value});
-        })
-        .then(function (data) {
-            return updateUI();
-        })
-})
 
 // POST Request
 const postData = async (url = '', data = {}) => {
@@ -69,3 +56,18 @@ const updateUI = async () => {
         console.log("Error", error);
     }
 }
+
+function handleSubmit(event) {
+    event.preventDefault()
+
+    fetchWeather(baseURL, zip.value, apiKey)
+        .then(function (data) {
+            console.log(data);
+            return postData('/data', {date: newDate, temp: data.main.temp, content: feelings.value});
+        })
+        .then(function (data) {
+            return updateUI();
+        })
+}
+
+export { handleSubmit }
