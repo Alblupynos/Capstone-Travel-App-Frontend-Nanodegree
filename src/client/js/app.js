@@ -1,25 +1,69 @@
-/* Global Variables */
-const baseURL = 'https://api.openweathermap.org/data/2.5/weather'
-const apiKey = 'b965444885756d1809d1b81b733240de&units=imperial'
+const geonamesUrl = 'http://api.geonames.org/searchJSON'
+const geonamesUsername = process.env.GEONAMES_USERNAME
+const weatherbitForecastUrl = 'http://api.weatherbit.io/v2.0/forecast/daily'
+const weatherbitHistoricalUrl = 'http://api.weatherbit.io/v2.0/history/daily'
+const weatherbitApiKey = process.env.WEATHERBIT_API_KEY
+const pixabayUrl = 'https://pixabay.com/api/'
+const pixabayApiKey = process.env.PIXABAY_API_KEY
+const backendUrl = 'http://localhost:8000'
 
-const zip = document.getElementById("zip");
-const feelings = document.getElementById("feelings");
-const temp = document.getElementById("temp");
-const date = document.getElementById('date')
-const content = document.getElementById('content')
+const trip = {};
+const destination = document.getElementById('destination')
+const travelDate = document.getElementById('travelDate')
+const destinationResult = document.getElementById('destinationResult')
+const dateResult = document.getElementById('dateResult')
+const temperature = document.getElementById('temperature')
+const weather = document.getElementById('weather')
+const destPhoto = document.getElementById('destPhoto')
 
-// Create a new date instance dynamically with JS
-let d = new Date();
-let newDate = (d.getMonth() + 1) + '.' + d.getDate() + '.' + d.getFullYear();
-
-//GET request to the OpenWeatherMap API
-const fetchWeather = async (baseURL, zipCode, apiKey) => {
-    const url = `${baseURL}?zip=${zipCode}&appid=${apiKey}`;
+//GET request to Geonames API
+const fetchLocation = async (destination) => {
+    const url = `${geonamesUrl}?q=${destination}&maxRows=1&username=${geonamesUsername}`
     try {
-        const response = await fetch(url);
-        return await response.json();
+        const response = await fetch(url).then(value => value.json());
+        const geonames = response["geonames"][0];
+        return {lat: geonames["lat"], lon: geonames["lng"], country: geonames["countryName"]};
     } catch (error) {
-        console.log('Error:', error);
+        console.log('Geonames API Error:', error);
+    }
+}
+
+//GET request to Weatherbit Forecast API
+const fetchForecastWeather = async (location, date) => {
+    const url = `${weatherbitForecastUrl}?lat=${location.lat}&lon=${location.lon}&key=${weatherbitApiKey}`
+    const today = new Date();
+    today.setHours(0, 0, 0, 0)
+    const daysFromNow = Math.floor((date - today) / 3600 / 24 / 1000)
+    try {
+        const response = await fetch(url).then(value => value.json());
+        const data = response["data"][daysFromNow];
+        return {temp: data["temp"], description: data["weather"]["description"]};
+    } catch (error) {
+        console.log('Weatherbit Forecast API Error:', error);
+    }
+}
+
+//GET request to Weatherbit Historical API
+const fetchHistoricalWeather = async (location, date) => {
+    let newDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    const url = `${weatherbitHistoricalUrl}?lat=${location.lat}&lon=${location.lon}&start_date=${newDate}&end_date=${newDate}&key=${weatherbitApiKey}`
+    try {
+        const response = await fetch(url).then(value => value.json());
+        const data = response["data"][0];
+        return {temp: data["temp"], description: data["weather"]["description"]};
+    } catch (error) {
+        console.log('Weatherbit Historical API Error:', error);
+    }
+}
+
+//GET request to Pixabay API
+const fetchImage = async (location) => {
+    const url = `${pixabayUrl}?q=${location.country}&image_type=photo&key=${pixabayApiKey}`
+    try {
+        const response = await fetch(url).then(value => value.json());
+        return response["hits"][0]["webformatURL"];
+    } catch (error) {
+        console.log('Pixabay API Error:', error);
     }
 }
 
@@ -44,30 +88,45 @@ const postData = async (url = '', data = {}) => {
 }
 
 // Update UI
-const updateUI = async () => {
-    const request = await fetch('/data');
-    try {
-        const allData = await request.json();
-        console.log(allData);
-        temp.innerHTML = 'Temperature: ' + allData.temp + ' degrees';
-        content.innerHTML = 'Feelings: ' + allData.content;
-        date.innerHTML = 'Date: ' + allData.date;
-    } catch (error) {
-        console.log("Error", error);
-    }
+const updateUI = async (trip) => {
+    destinationResult.innerHTML = `${trip.destination}, ${trip.location.country}`
+    dateResult.innerHTML = trip.date
+    temperature.innerHTML = trip.weatherData.temp
+    weather.innerHTML = trip.weatherData.description
+    destPhoto.src = trip.imageUrl
 }
 
 function handleSubmit(event) {
     event.preventDefault()
 
-    fetchWeather(baseURL, zip.value, apiKey)
-        .then(function (data) {
-            console.log(data);
-            return postData('/data', {date: newDate, temp: data.main.temp, content: feelings.value});
+    trip.destination = destination.value
+    trip.date = travelDate.value
+
+    fetchLocation(trip.destination)
+        .then(function (location) {
+            trip.location = location
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0)
+            const date = new Date(trip.date);
+            if (date - today >= 0) {
+                return fetchForecastWeather(location, date)
+            } else {
+                return fetchHistoricalWeather(location, date)
+            }
         })
-        .then(function (data) {
-            return updateUI();
+        .then(function (weatherData) {
+            trip.weatherData = weatherData
+            return fetchImage(trip.location)
+        })
+        .then(function (imageUrl) {
+            trip.imageUrl = imageUrl
+            console.log(trip)
+            return postData(`${backendUrl}/data`, trip)
+        })
+        .then(function () {
+            return updateUI(trip);
         })
 }
 
-export { handleSubmit }
+export {handleSubmit}

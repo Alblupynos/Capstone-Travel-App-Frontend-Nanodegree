@@ -2,32 +2,32 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Weather Journal</title>
+    <title>Travel App</title>
     <link href="https://fonts.googleapis.com/css?family=Oswald:400,600,700|Ranga:400,700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="app">
-    <div class="holder headline">
-        Weather Journal App
-    </div>
-    <div class="holder entry">
-        <div class="title">Most Recent Entry</div>
-        <div id="entryHolder">
-            <div id="date"></div>
-            <div id="temp"></div>
-            <div id="content"></div>
+<header>Travel Planner</header>
+<div id="content">
+    <form id="search">
+        <input type="text" id="destination" placeholder="Enter your destination" autocomplete="off" required>
+        <input type="date" id="travelDate" required>
+        <input type="submit" id="generate" value="Plan trip">
+    </form>
+    <div id="currentTrip">
+        <div>
+            <img id="destPhoto" alt="destination image">
+        </div>
+        <div id="mainDetails">
+            <div id="destinationDetails">My trip to: <span id="destinationResult">London</span>,
+                <span id="dateResult">London</span>
+            </div>
+            <div id="weatherDetails">Expected weather: <span id="temperature">23 &#8451;</span>,
+                <span id="weather">Sunny</span>.
+            </div>
         </div>
     </div>
-    <div class="holder zip">
-        <label for="zip">Enter Zipcode here</label>
-        <input type="text" id="zip" placeholder="enter zip code here">
-    </div>
-    <div class="holder feel">
-        <label for="feelings">How are you feeling today?</label>
-        <textarea class="myInput" id="feelings" placeholder="Enter your feelings here" rows="9" cols="50"></textarea>
-        <button id="generate" type="submit"> Generate</button>
-    </div>
 </div>
+<footer>Copyright 2023</footer>
 </body>
 <script>
     // Check that service workers are supported

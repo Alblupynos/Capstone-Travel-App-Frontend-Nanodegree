@@ -25,11 +25,7 @@ app.get('/data', (req, res) => {
 
 //Add a POST route
 app.post('/data', (req, res) => {
-    projectData = {
-        temp: req.body.temp,
-        date: req.body.date,
-        content: req.body.content
-    };
+    projectData = req.body;
     res.send(projectData);
 });
 
