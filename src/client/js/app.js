@@ -7,7 +7,7 @@ const pixabayUrl = 'https://pixabay.com/api/'
 const pixabayApiKey = process.env.PIXABAY_API_KEY
 const backendUrl = 'http://localhost:8000'
 
-const trip = {};
+let trip = {};
 const destination = document.getElementById('destination')
 const travelDate = document.getElementById('travelDate')
 const destinationResult = document.getElementById('destinationResult')
@@ -87,6 +87,23 @@ const postData = async (url = '', data = {}) => {
     }
 }
 
+// DELETE Request
+async function deleteData(event) {
+    const response = await fetch(`${backendUrl}/data`, {
+        method: 'DELETE'
+    });
+
+    try {
+        const res = await response;
+        console.log("Delete data:" + res.ok);
+        if (res.ok) {
+            trip = {}
+        }
+    } catch (error) {
+        console.log("Error,", error);
+    }
+}
+
 // Update UI
 const updateUI = async (trip) => {
     destinationResult.innerHTML = `${trip.destination}, ${trip.location.country}`
@@ -129,4 +146,4 @@ function handleSubmit(event) {
         })
 }
 
-export {handleSubmit}
+export {handleSubmit, deleteData}
