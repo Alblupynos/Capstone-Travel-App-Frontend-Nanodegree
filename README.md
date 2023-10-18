@@ -1,10 +1,30 @@
-# Weather-Journal App Project
+# Project description
 
-## Overview
-This project requires you to create an asynchronous web app that uses Web API and user data to dynamically update the UI. 
+The project will include a simple form where you enter the location you are traveling to and the date you are leaving.
+If the trip is within a week, you will get the current weather forecast. If the trip is in the future, you will get a
+predicted forecast.
 
-## Instructions
-This will require modifying the `index.js` file and the `website/app.js` file. You can see `index.html` for element references, and once you are finished with the project steps, you can use `style.css` to style your application to customized perfection.
+__The Weatherbit API__ used for this project.
 
-## Extras
-If you are interested in testing your code as you go, you can use `tests.js` as a template for writing and running some basic tests for your code.
+## Run the app
+
+```
+npm start
+npm run build-dev
+```
+
+## Dependencies
+
+```
+    "cors": "^2.8.5",
+    "css-loader": "^6.8.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "sass": "^1.69.3",
+    "sass-loader": "^13.3.2",
+    "style-loader": "^3.3.3",
+    "terser-webpack-plugin": "^5.3.9",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+```
