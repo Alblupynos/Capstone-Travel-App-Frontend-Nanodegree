@@ -15,6 +15,7 @@ const dateResult = document.getElementById('dateResult')
 const temperature = document.getElementById('temperature')
 const weather = document.getElementById('weather')
 const destPhoto = document.getElementById('destPhoto')
+const currentTrip = document.getElementById('currentTrip')
 
 //GET request to Geonames API
 const fetchLocation = async (destination) => {
@@ -98,6 +99,7 @@ async function deleteData(event) {
         console.log("Delete data:" + res.ok);
         if (res.ok) {
             trip = {}
+            currentTrip.style.visibility = "hidden";
         }
     } catch (error) {
         console.log("Error,", error);
@@ -111,6 +113,7 @@ const updateUI = async (trip) => {
     temperature.innerHTML = trip.weatherData.temp
     weather.innerHTML = trip.weatherData.description
     destPhoto.src = trip.imageUrl
+    currentTrip.style.visibility = "visible";
 }
 
 function handleSubmit(event) {

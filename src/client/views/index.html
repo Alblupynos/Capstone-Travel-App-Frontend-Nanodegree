@@ -7,29 +7,25 @@
 </head>
 <body>
 <header>Travel Planner</header>
-<div id="content">
+<main>
     <form id="search">
         <input type="text" id="destination" placeholder="Enter your destination" autocomplete="off" required>
         <input type="date" id="travelDate" required>
         <input type="submit" id="generate" value="Plan trip">
     </form>
-    <div id="currentTrip">
-        <div>
-            <img id="destPhoto" alt="destination image">
-        </div>
-        <div id="mainDetails">
-            <div id="destinationDetails">My trip to: <span id="destinationResult">London</span>,
-                <span id="dateResult">London</span>
+    <section id="currentTrip">
+        <img id="destPhoto" alt="destination image">
+        <div id="tripDetails">
+            <div id="destinationDetails">My trip to: <span id="destinationResult">City</span>,
+                <span id="dateResult">Country</span>
             </div>
-            <div id="weatherDetails">Expected weather: <span id="temperature">23 &#8451;</span>,
-                <span id="weather">Sunny</span>.
+            <div id="weatherDetails">Expected weather: <span id="temperature">celsius degree</span>,
+                <span id="weather">weather description</span>.
             </div>
-        </div>
-        <div>
             <button id="deleteTrip">Delete</button>
         </div>
-    </div>
-</div>
+    </section>
+</main>
 <footer>Copyright 2023</footer>
 </body>
 <script>

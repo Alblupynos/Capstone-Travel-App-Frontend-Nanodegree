@@ -1,8 +1,7 @@
-import {projectData} from "../src/server/index"
+const app = require('../src/server/app')
 
 describe("Testing server functionality", () => {
-    test("Testing projectData is present", () => {
-        expect(projectData).toBeDefined();
-        expect(projectData).toEqual({});
+    test("Testing app is defined", () => {
+        expect(app).toBeDefined();
     });
 });
